@@ -24,7 +24,7 @@ class Fluent::AddOutput < Fluent::Output
         record[k] = v
       end
       @add_hash[@uuid_key_name] = SecureRandom.hex(@uuid_len)
-      Fluent::Engine.emit(emit_tag, time, @add_hash)
+      Fluent::Engine.emit(emit_tag, time, record)
     end
 
     chain.next
