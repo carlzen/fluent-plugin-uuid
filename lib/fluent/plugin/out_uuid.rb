@@ -1,9 +1,11 @@
 require 'securerandom'
 
 class Fluent::AddOutput < Fluent::Output
-  
+
   Fluent::Plugin.register_output('uuid', self)
 
+  config_param :uuid_len, :integer, :default => nil
+  config_param :uuid_key_name, :string, :default => 'uuid'
   config_param :add_tag_prefix, :string, :default => 'greped'
 
   def initialize
@@ -13,6 +15,7 @@ class Fluent::AddOutput < Fluent::Output
   def configure(conf)
     super
 
+    @uuid_len ||= 32
     @tag_prefix = "#{@add_tag_prefix}."
     @add_hash = Hash.new
 
@@ -31,7 +34,7 @@ class Fluent::AddOutput < Fluent::Output
       @add_hash.each do |k,v|
         record[k] = v
       end
-      @add_hash['uuid'] = SecureRandom.hex(12)
+      @add_hash[@uuid_key_name] = SecureRandom.hex(@uuid_len)
       Fluent::Engine.emit(emit_tag, time, record)
     end
 
