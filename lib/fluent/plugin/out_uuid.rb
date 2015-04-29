@@ -17,14 +17,12 @@ class Fluent::AddOutput < Fluent::Output
   end
 
   def emit(tag, es, chain)
-    emit_tag = @tag_proc.call(tag)
-
     es.each do |time,record|
       @add_hash.each do |k,v|
         record[k] = v
       end
       @add_hash[@uuid_key_name] = SecureRandom.hex(@uuid_len)
-      Fluent::Engine.emit(emit_tag, time, record)
+      Fluent::Engine.emit(tag, time, add_hash)
     end
 
     chain.next
