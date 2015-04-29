@@ -1,6 +1,6 @@
 require 'securerandom'
 
-class Fluent::AddOutput < Fluent::Output
+class Fluent::UUIDOutput < Fluent::Output
 
   Fluent::Plugin.register_output('uuid', self)
 
