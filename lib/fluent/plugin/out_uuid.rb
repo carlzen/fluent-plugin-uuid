@@ -4,8 +4,8 @@ class Fluent::AddOutput < Fluent::Output
 
   Fluent::Plugin.register_output('uuid', self)
 
-  config_param :uuid_len, :integer, :default => nil
-  config_param :uuid_key_name, :string, :default => 'uuid'
+  config_param :uuid_len,       :integer, :default => 32
+  config_param :uuid_key_name,  :string,  :default => 'uuid'
 
   def initialize
     super
@@ -13,17 +13,7 @@ class Fluent::AddOutput < Fluent::Output
 
   def configure(conf)
     super
-
-    @uuid_len ||= 32
-    @tag_prefix = "#{@add_tag_prefix}."
     @add_hash = Hash.new
-
-    @tag_proc =
-      if @tag_prefix
-        Proc.new {|tag| "#{@tag_prefix}#{tag}" }
-      else
-        Proc.new {|tag| tag }
-      end
   end
 
   def emit(tag, es, chain)
@@ -34,10 +24,9 @@ class Fluent::AddOutput < Fluent::Output
         record[k] = v
       end
       @add_hash[@uuid_key_name] = SecureRandom.hex(@uuid_len)
-      Fluent::Engine.emit(emit_tag, time, record)
+      Fluent::Engine.emit(emit_tag, time, add_hash)
     end
 
     chain.next
   end
-
 end
