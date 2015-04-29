@@ -6,7 +6,6 @@ class Fluent::AddOutput < Fluent::Output
 
   config_param :uuid_len, :integer, :default => nil
   config_param :uuid_key_name, :string, :default => 'uuid'
-  config_param :add_tag_prefix, :string, :default => 'greped'
 
   def initialize
     super
