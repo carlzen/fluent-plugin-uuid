@@ -1,10 +1,9 @@
-require 'securerandom'
+require 'uuidtools'
 
 class Fluent::UUIDOutput < Fluent::Output
 
   Fluent::Plugin.register_output('uuid', self)
 
-  config_param :uuid_len,       :integer, :default => 32
   config_param :uuid_key_name,  :string,  :default => 'uuid'
   config_param :add_tag_prefix, :string, :default => 'uuid'
 
@@ -33,7 +32,7 @@ class Fluent::UUIDOutput < Fluent::Output
       @add_hash.each do |k,v|
         record[k] = v
       end
-      record[@uuid_key_name] = SecureRandom.hex(@uuid_len)
+      record[@uuid_key_name] = UUIDTools::UUID.timestamp_create
 
       Fluent::Engine.emit(emit_tag, time, record)
     end
